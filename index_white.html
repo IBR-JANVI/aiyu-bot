@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIYUBOT Marketplace - Discover, Buy & Deploy AI Agents</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #fafafa;
+            --bg-secondary: #f5f5f5;
+            --bg-tertiary: #efefef;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6b6b6b;
+            --text-tertiary: #9a9a9a;
+            --accent: #2d5bff;
+            --accent-light: #e8efff;
+            --border: #e5e5e5;
+            --border-light: #f0f0f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animated Background */
+        .bg-motion {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.4;
+        }
+
+        .shape-1 {
+            width: 800px;
+            height: 800px;
+            background: linear-gradient(135deg, #e8efff 0%, transparent 70%);
+            top: -400px;
+            right: -200px;
+        }
+
+        .shape-2 {
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(135deg, #f0f5ff 0%, transparent 70%);
+            bottom: -200px;
+            left: -100px;
+        }
+
+        .shape-3 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(45, 91, 255, 0.08) 0%, transparent 70%);
+            top: 40%;
+            left: 30%;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            padding: 24px 0;
+            background: rgba(250, 250, 250, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 48px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            position: relative;
+            padding: 8px 0;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            padding: 12px 28px;
+            background: var(--text-primary);
+            border: none;
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-cta:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 160px 48px 100px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1.15fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .hero-content {
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: var(--accent-light);
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 32px;
+        }
+
+        .hero-badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        .hero h1 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(48px, 5.5vw, 78px);
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: 28px;
+            color: var(--text-primary);
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        .hero-description {
+            font-size: 18px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            max-width: 520px;
+            margin-bottom: 44px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn-primary {
+            padding: 18px 36px;
+            background: var(--text-primary);
+            border: none;
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(45, 91, 255, 0.2);
+        }
+
+        .btn-secondary {
+            padding: 18px 36px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        /* Hero Visual */
+        .hero-visual {
+            position: relative;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .visual-container {
+            position: relative;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .visual-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 12px 48px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-light);
+        }
+
+        .visual-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .visual-avatar {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--accent) 0%, #6b8dff 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .visual-meta h4 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .visual-meta span {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .visual-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 24px 0;
+            border-top: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 24px;
+        }
+
+        .visual-stat {
+            text-align: center;
+        }
+
+        .visual-stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .visual-stat-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .visual-price {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .visual-price-value {
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .visual-price-period {
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+
+        .floating-badge {
+            position: absolute;
+            padding: 12px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .badge-1 {
+            top: 20px;
+            right: -20px;
+        }
+
+        .badge-2 {
+            bottom: 40px;
+            left: -40px;
+        }
+
+        /* Section Styles */
+        section {
+            position: relative;
+            z-index: 1;
+            padding: 120px 48px;
+        }
+
+        .section-header {
+            margin-bottom: 80px;
+            max-width: 600px;
+        }
+
+        .section-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .section-header h2 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(36px, 4.5vw, 54px);
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .section-header p {
+            font-size: 17px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Featured Agents - Minimal */
+        .agents-section {
+            background: var(--bg-secondary);
+        }
+
+        .agents-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .agents-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 60px;
+        }
+
+        .agents-list {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .agent-row {
+            display: grid;
+            grid-template-columns: 1fr 200px 1fr 120px;
+            align-items: center;
+            gap: 40px;
+            padding: 32px 40px;
+            background: white;
+            border-radius: 20px;
+            border: 1px solid var(--border-light);
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .agent-row:hover {
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+            border-color: var(--border);
+            transform: translateY(-2px);
+        }
+
+        .agent-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .agent-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--accent-light);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .agent-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .agent-type {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .agent-desc-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            max-width: 400px;
+        }
+
+        .agent-meta-row {
+            display: flex;
+            gap: 32px;
+        }
+
+        .agent-stat-item {
+            text-align: center;
+        }
+
+        .agent-stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .agent-stat-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+        }
+
+        .agent-price-row {
+            text-align: right;
+        }
+
+        .agent-price-value {
+            font-size: 28px;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .agent-price-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        /* How It Works - Editorial */
+        .how-it-works {
+            background: var(--bg-primary);
+        }
+
+        .process-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 48px;
+        }
+
+        .process-item {
+            position: relative;
+        }
+
+        .process-number {
+            font-family: 'Instrument Serif', serif;
+            font-size: 72px;
+            font-weight: 400;
+            color: var(--bg-tertiary);
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .process-item h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .process-item p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Categories - Minimal */
+        .categories-section {
+            background: var(--bg-secondary);
+        }
+
+        .categories-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+        }
+
+        .category-item {
+            padding: 32px 20px;
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border-light);
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .category-item:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(45, 91, 255, 0.1);
+        }
+
+        .category-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .category-item h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .category-count {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        /* Why Us - Split */
+        .why-us-section {
+            background: var(--bg-primary);
+        }
+
+        .why-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 80px;
+            align-items: start;
+        }
+
+        .why-left {
+            position: sticky;
+            top: 140px;
+        }
+
+        .why-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: 48px;
+            font-weight: 400;
+            line-height: 1.15;
+            margin-bottom: 24px;
+        }
+
+        .why-title em {
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        .why-desc {
+            font-size: 17px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        .why-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .why-stat {
+            padding: 24px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .why-stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .why-stat-label {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .why-features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .feature-item {
+            padding: 32px;
+            background: white;
+            border-radius: 20px;
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+            border-color: var(--border);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--accent-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        .feature-item h4 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .feature-item p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: var(--text-primary);
+            padding: 140px 48px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at 50% 0%, rgba(45, 91, 255, 0.15) 0%, transparent 60%);
+        }
+
+        .cta-content {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(40px, 5vw, 56px);
+            font-weight: 400;
+            color: white;
+            margin-bottom: 24px;
+        }
+
+        .cta-subtitle {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 48px;
+        }
+
+        .cta-form {
+            display: flex;
+            gap: 12px;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .cta-form input {
+            flex: 1;
+            padding: 18px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .cta-form input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .cta-form input:focus {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .cta-form button {
+            padding: 18px 32px;
+            background: var(--accent);
+            border: none;
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cta-form button:hover {
+            background: #1a47e0;
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 80px 48px 40px;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .footer-brand .logo {
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .footer-brand p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            max-width: 280px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .footer-social a {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .footer-column h4 {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 14px;
+        }
+
+        .footer-column a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-column a:hover {
+            color: var(--text-primary);
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-top: 30px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 60px;
+            }
+
+            .hero-visual {
+                order: -1;
+                height: 380px;
+            }
+
+            .process-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .categories-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .why-container {
+                grid-template-columns: 1fr;
+            }
+
+            .why-left {
+                position: relative;
+                top: 0;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            section {
+                padding: 80px 32px;
+            }
+
+            .agent-row {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .agent-meta-row {
+                justify-content: flex-start;
+            }
+
+            .agent-price-row {
+                text-align: left;
+            }
+
+            .why-features {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 24px;
+            }
+
+            .hero {
+                padding: 140px 24px 60px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+            }
+
+            .hero-visual {
+                display: none;
+            }
+
+            .process-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .why-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-form {
+                flex-direction: column;
+            }
+
+            .cta-form button {
+                width: 100%;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+        }
+
+        /* GSAP Animation Classes */
+        .gsap-fade-up {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .gsap-fade-left {
+            opacity: 0;
+            transform: translateX(-40px);
+        }
+
+        .gsap-fade-right {
+            opacity: 0;
+            transform: translateX(40px);
+        }
+
+        .gsap-scale {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Motion -->
+    <div class="bg-motion">
+        <div class="bg-shape shape-1"></div>
+        <div class="bg-shape shape-2"></div>
+        <div class="bg-shape shape-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">AIYU<span>BOT</span></div>
+            <ul class="nav-links">
+                <li><a href="#agents">Agents</a></li>
+                <li><a href="#how-it-works">Process</a></li>
+                <li><a href="#categories">Categories</a></li>
+                <li><a href="#why-us">Why Us</a></li>
+            </ul>
+            <button class="nav-cta">Get Started</button>
+            <button class="mobile-menu-btn">☰</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge gsap-fade-up">
+                    <span class="hero-badge-dot"></span>
+                    Over 500+ AI Agents Available
+                </div>
+                <h1 class="gsap-fade-up">Discover & Deploy <em>Intelligent</em> AI Agents</h1>
+                <p class="hero-description gsap-fade-up">Your gateway to premium AI agents. Browse hundreds of specialized solutions, purchase instantly, and deploy seamlessly.</p>
+                <div class="hero-buttons gsap-fade-up">
+                    <button class="btn-primary">Explore Marketplace</button>
+                    <button class="btn-secondary">Watch Demo</button>
+                </div>
+            </div>
+            <div class="hero-visual gsap-fade-right">
+                <div class="visual-container">
+                    <div class="visual-card">
+                        <div class="visual-header">
+                            <div class="visual-avatar">💻</div>
+                            <div class="visual-meta">
+                                <h4>Codex Pro</h4>
+                                <span>Development Agent</span>
+                            </div>
+                        </div>
+                        <div class="visual-stats">
+                            <div class="visual-stat">
+                                <span class="visual-stat-value">98%</span>
+                                <span class="visual-stat-label">Accuracy</span>
+                            </div>
+                            <div class="visual-stat">
+                                <span class="visual-stat-value">50+</span>
+                                <span class="visual-stat-label">Languages</span>
+                            </div>
+                            <div class="visual-stat">
+                                <span class="visual-stat-value">0.2s</span>
+                                <span class="visual-stat-label">Latency</span>
+                            </div>
+                        </div>
+                        <div class="visual-price">
+                            <span class="visual-price-value">$49</span>
+                            <span class="visual-price-period">/month</span>
+                        </div>
+                    </div>
+                    <div class="floating-badge badge-1 gsap-scale">Verified</div>
+                    <div class="floating-badge badge-2 gsap-scale">4.9 ★</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Agents -->
+    <section class="agents-section" id="agents">
+        <div class="agents-container">
+            <div class="agents-header gsap-fade-up">
+                <div class="section-header" style="margin-bottom: 0;">
+                    <span class="section-label">Featured</span>
+                    <h2>Popular AI Agents</h2>
+                </div>
+            </div>
+            <div class="agents-list">
+                <div class="agent-row gsap-fade-up">
+                    <div class="agent-info">
+                        <div class="agent-icon">💻</div>
+                        <div>
+                            <div class="agent-name">Codex Pro</div>
+                            <div class="agent-type">Development</div>
+                        </div>
+                    </div>
+                    <div class="agent-desc-text">Advanced coding interface with multi-language synthesis and autonomous debugging.</div>
+                    <div class="agent-meta-row">
+                        <div class="agent-stat-item">
+                            <span class="agent-stat-value">98%</span>
+                            <span class="agent-stat-label">Accuracy</span>
+                        </div>
+                        <div class="agent-stat-item">
+                            <span class="agent-stat-value">50+</span>
+                            <span class="agent-stat-label">Languages</span>
+                        </div>
+                    </div>
+                    <div class="agent-price-row">
+                        <span class="agent-price-value">$49</span>
+                        <span class="agent-price-label">/month</span>
+                    </div>
+                </div>
+
+                <div class="agent-row gsap-fade-up">
+                    <div class="agent-info">
+                        <div class="agent-icon">📊</div>
+                        <div>
+                            <div class="agent-name">DataMind</div>
+                            <div class="agent-type">Analytics</div>
+                        </div>
+                    </div>
+                    <div class="agent-desc-text">Predictive analytics engine with real-time visualization and trend forecasting.</div>
+                    <div class="agent-meta-row">
+                        <div class="agent-stat-item">
+                            <span class="agent-stat-value">99%</span>
+                            <span class="agent-stat-label">Precision</span>
+                        </div>
+                        <div class="agent-stat-item">
+                            <span class="agent-stat-value">PB</span>
+                            <span class="agent-stat-label">Capacity</span>
+                        </div>
+                    </div>
+                    <div class="agent-price-row">
+                        <span class="agent-price-value">$79</span>
+                        <span class="agent-price-label">/month</span>
+                    </div>
+                </div>
+
+                <div class="agent-row gsap-fade-up">
+                    <div class="agent-info">
+                        <div class="agent-icon">🎨</div>
+                        <div>
+                            <div class="agent-name">CreativeFlow</div>
+                            <div class="agent-type">Content</div>
+                        </div>
+                    </div>
+                    <div class="agent-desc-text">AI-powered creative assistant for design, writing, and multimedia content generation.</div>
+                    <div class="agent-meta-row">
+                        <div class="agent-stat-item">
+                            <span class="agent-stat-value">95%</span>
+                            <span class="agent-stat-label">Quality</span>
+                        </div>
+                        <div class="agent-stat-item">
+                            <span class="agent-stat-value">∞</span>
+                            <span class="agent-stat-label">Formats</span>
+                        </div>
+                    </div>
+                    <div class="agent-price-row">
+                        <span class="agent-price-value">$59</span>
+                        <span class="agent-price-label">/month</span>
+                    </div>
+                </div>
+
+                <div class="agent-row gsap-fade-up">
+                    <div class="agent-info">
+                        <div class="agent-icon">🔒</div>
+                        <div>
+                            <div class="agent-name">SecureGuard</div>
+                            <div class="agent-type">Security</div>
+                        </div>
+                    </div>
+                    <div class="agent-desc-text">Enterprise-grade cybersecurity agent with threat detection and mitigation.</div>
+                    <div class="agent-meta-row">
+                        <div class="agent-stat-item">
+                            <span class="agent-stat-value">100%</span>
+                            <span class="agent-stat-label">Protection</span>
+                        </div>
+                        <div class="agent-stat-item">
+                            <span class="agent-stat-value">24/7</span>
+                            <span class="agent-stat-label">Monitoring</span>
+                        </div>
+                    </div>
+                    <div class="agent-price-row">
+                        <span class="agent-price-value">$99</span>
+                        <span class="agent-price-label">/month</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="process-container">
+            <div class="section-header gsap-fade-up">
+                <span class="section-label">Process</span>
+                <h2>How It Works</h2>
+                <p>Get started with AI agents in four simple steps</p>
+            </div>
+            <div class="process-grid">
+                <div class="process-item gsap-fade-up">
+                    <div class="process-number">01</div>
+                    <h3>Browse Agents</h3>
+                    <p>Explore our curated collection of specialized AI agents across various categories and use cases.</p>
+                </div>
+                <div class="process-item gsap-fade-up">
+                    <div class="process-number">02</div>
+                    <h3>Select & Purchase</h3>
+                    <p>Choose the perfect agent for your needs and complete a secure purchase in just a few clicks.</p>
+                </div>
+                <div class="process-item gsap-fade-up">
+                    <div class="process-number">03</div>
+                    <h3>Instant Deploy</h3>
+                    <p>Deploy your AI agent immediately with our streamlined integration process and API access.</p>
+                </div>
+                <div class="process-item gsap-fade-up">
+                    <div class="process-number">04</div>
+                    <h3>Scale Up</h3>
+                    <p>Monitor performance and easily scale your operations as your needs evolve.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="categories-section" id="categories">
+        <div class="categories-container">
+            <div class="section-header gsap-fade-up">
+                <span class="section-label">Browse</span>
+                <h2>Categories</h2>
+                <p>Find the perfect AI agent for your specific requirements</p>
+            </div>
+            <div class="categories-grid">
+                <div class="category-item gsap-scale">
+                    <span class="category-icon">💻</span>
+                    <h4>Development</h4>
+                    <span class="category-count">120+ Agents</span>
+                </div>
+                <div class="category-item gsap-scale">
+                    <span class="category-icon">📊</span>
+                    <h4>Analytics</h4>
+                    <span class="category-count">85+ Agents</span>
+                </div>
+                <div class="category-item gsap-scale">
+                    <span class="category-icon">🎨</span>
+                    <h4>Creative</h4>
+                    <span class="category-count">95+ Agents</span>
+                </div>
+                <div class="category-item gsap-scale">
+                    <span class="category-icon">🔒</span>
+                    <h4>Security</h4>
+                    <span class="category-count">60+ Agents</span>
+                </div>
+                <div class="category-item gsap-scale">
+                    <span class="category-icon">💬</span>
+                    <h4>Support</h4>
+                    <span class="category-count">110+ Agents</span>
+                </div>
+                <div class="category-item gsap-scale">
+                    <span class="category-icon">📝</span>
+                    <h4>Writing</h4>
+                    <span class="category-count">130+ Agents</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Us -->
+    <section class="why-us-section" id="why-us">
+        <div class="why-container">
+            <div class="why-left gsap-fade-left">
+                <h2 class="why-title">Why Choose <em>AIYUBOT</em></h2>
+                <p class="why-desc">We're committed to providing the most reliable, scalable, and intelligent AI agent solutions for businesses of all sizes.</p>
+                <div class="why-stats">
+                    <div class="why-stat">
+                        <span class="why-stat-value">500+</span>
+                        <span class="why-stat-label">Active Agents</span>
+                    </div>
+                    <div class="why-stat">
+                        <span class="why-stat-value">50K+</span>
+                        <span class="why-stat-label">Users</span>
+                    </div>
+                    <div class="why-stat">
+                        <span class="why-stat-value">99.9%</span>
+                        <span class="why-stat-label">Uptime</span>
+                    </div>
+                </div>
+            </div>
+            <div class="why-features">
+                <div class="feature-item gsap-fade-up">
+                    <div class="feature-icon">⚡</div>
+                    <h4>Instant Deployment</h4>
+                    <p>Get your AI agent up and running in minutes with our streamlined deployment process.</p>
+                </div>
+                <div class="feature-item gsap-fade-up">
+                    <div class="feature-icon">🔐</div>
+                    <h4>Enterprise Security</h4>
+                    <p>Your data is protected with bank-level encryption and compliance certifications.</p>
+                </div>
+                <div class="feature-item gsap-fade-up">
+                    <div class="feature-icon">📈</div>
+                    <h4>Scalable Solutions</h4>
+                    <p>From startup to enterprise, our agents grow with your business needs.</p>
+                </div>
+                <div class="feature-item gsap-fade-up">
+                    <div class="feature-icon">🎯</div>
+                    <h4>Expert Support</h4>
+                    <p>24/7 dedicated support team ready to help you optimize your AI operations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-content gsap-fade-up">
+            <h2 class="cta-title">Ready to Transform Your Workflow?</h2>
+            <p class="cta-subtitle">Join thousands of businesses already leveraging AIYUBOT agents</p>
+            <div class="cta-form">
+                <input type="email" placeholder="Enter your email">
+                <button>Get Started Free</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="logo">AIYU<span>BOT</span></div>
+                <p>The premier marketplace for discovering, purchasing, and deploying intelligent AI agents.</p>
+                <div class="footer-social">
+                    <a href="#">𝕏</a>
+                    <a href="#">in</a>
+                    <a href="#">▶</a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h4>Marketplace</h4>
+                <ul>
+                    <li><a href="#">Browse Agents</a></li>
+                    <li><a href="#">Categories</a></li>
+                    <li><a href="#">Pricing</a></li>
+                    <li><a href="#">Featured</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Press</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">API Reference</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 AIYUBOT. All rights reserved.</span>
+            <span>Privacy Policy · Terms of Service</span>
+        </div>
+    </footer>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+        // Background motion with GSAP
+        gsap.to('.shape-1', {
+            x: 100,
+            y: 50,
+            duration: 20,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+
+        gsap.to('.shape-2', {
+            x: -80,
+            y: -60,
+            duration: 25,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+
+        gsap.to('.shape-3', {
+            scale: 1.2,
+            opacity: 0.6,
+            duration: 15,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+
+        // Hero animations on load
+        const heroTimeline = gsap.timeline({ defaults: { ease: 'power3.out' } });
+        
+        heroTimeline
+            .to('.hero-badge', { opacity: 1, y: 0, duration: 0.8 })
+            .to('.hero h1', { opacity: 1, y: 0, duration: 1 }, '-=0.6')
+            .to('.hero-description', { opacity: 1, y: 0, duration: 0.8 }, '-=0.7')
+            .to('.hero-buttons', { opacity: 1, y: 0, duration: 0.8 }, '-=0.5')
+            .to('.hero-visual', { opacity: 1, x: 0, duration: 1 }, '-=0.8');
+
+        // Set initial states for hero elements
+        gsap.set(['.hero-badge', '.hero h1', '.hero-description', '.hero-buttons'], { 
+            opacity: 0, 
+            y: 30 
+        });
+        gsap.set('.hero-visual', { opacity: 0, x: 40 });
+
+        // Scroll animations for different sections
+        const fadeUpElements = document.querySelectorAll('.gsap-fade-up');
+        fadeUpElements.forEach((el, i) => {
+            gsap.to(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse'
+                },
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                delay: i * 0.1,
+                ease: 'power3.out'
+            });
+        });
+
+        const fadeLeftElements = document.querySelectorAll('.gsap-fade-left');
+        fadeLeftElements.forEach((el) => {
+            gsap.to(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse'
+                },
+                opacity: 1,
+                x: 0,
+                duration: 1,
+                ease: 'power3.out'
+            });
+        });
+
+        const fadeRightElements = document.querySelectorAll('.gsap-fade-right');
+        fadeRightElements.forEach((el) => {
+            gsap.to(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse'
+                },
+                opacity: 1,
+                x: 0,
+                duration: 1,
+                ease: 'power3.out'
+            });
+        });
+
+        const scaleElements = document.querySelectorAll('.gsap-scale');
+        scaleElements.forEach((el, i) => {
+            gsap.to(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: 'top 90%',
+                    toggleActions: 'play none none reverse'
+                },
+                opacity: 1,
+                scale: 1,
+                duration: 0.8,
+                delay: i * 0.05,
+                ease: 'power3.out'
+            });
+        });
+
+        // Set initial states for scale elements
+        gsap.set('.gsap-scale', { opacity: 0, scale: 0.9 });
+
+        // Button hover animations
+        const buttons = document.querySelectorAll('.btn-primary, .btn-secondary, .nav-cta, .cta-form button');
+        buttons.forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                gsap.to(btn, { scale: 1.02, duration: 0.2, ease: 'power2.out' });
+            });
+            btn.addEventListener('mouseleave', () => {
+                gsap.to(btn, { scale: 1, duration: 0.2, ease: 'power2.out' });
+            });
+        });
+
+        // Agent row hover effect
+        const agentRows = document.querySelectorAll('.agent-row');
+        agentRows.forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                gsap.to(row, { y: -4, duration: 0.3, ease: 'power2.out' });
+            });
+            row.addEventListener('mouseleave', () => {
+                gsap.to(row, { y: 0, duration: 0.3, ease: 'power2.out' });
+            });
+        });
+
+        // Category item hover
+        const categoryItems = document.querySelectorAll('.category-item');
+        categoryItems.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                gsap.to(item, { y: -8, duration: 0.3, ease: 'power2.out' });
+            });
+            item.addEventListener('mouseleave', () => {
+                gsap.to(item, { y: 0, duration: 0.3, ease: 'power2.out' });
+            });
+        });
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    gsap.to(window, {
+                        duration: 1,
+                        scrollTo: { y: target.offsetTop - 80 },
+                        ease: 'power3.inOut'
+                    });
+                }
+            });
+        });
+
+        // Parallax effect on sections
+        gsap.utils.toArray('section').forEach(section => {
+            gsap.to(section, {
+                scrollTrigger: {
+                    trigger: section,
+                    start: 'top bottom',
+                    end: 'bottom top',
+                    scrub: 1
+                },
+                y: -30,
+                ease: 'none'
+            });
+        });
+    </script>
+</body>
+</html>
