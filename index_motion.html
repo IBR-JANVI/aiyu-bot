@@ -1,0 +1,2169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIYUBOT Marketplace - Discover, Buy & Deploy AI Agents</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #fafafa;
+            --bg-secondary: #f5f5f5;
+            --bg-tertiary: #efefef;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6b6b6b;
+            --text-tertiary: #9a9a9a;
+            --accent: #2d5bff;
+            --accent-light: #e8efff;
+            --accent-subtle: #dbe4ff;
+            --accent-lavender: #8b5cf6;
+            --accent-teal: #14b8a6;
+            --border: #e5e5e5;
+            --border-light: #f0f0f0;
+            --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.12);
+            --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.16);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.65;
+        }
+
+        /* Animated Background */
+        .bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-gradient-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(ellipse 60% 50% at 15% 15%, rgba(45, 91, 255, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse 50% 40% at 85% 75%, rgba(139, 92, 246, 0.04) 0%, transparent 50%),
+                radial-gradient(ellipse 40% 30% at 60% 40%, rgba(20, 184, 166, 0.03) 0%, transparent 50%);
+        }
+
+        .bg-blob-section {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
+            will-change: transform, opacity;
+        }
+
+        .orb-blue {
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(45, 91, 255, 0.12) 0%, transparent 70%);
+            top: -300px;
+            right: -200px;
+        }
+
+        .orb-purple {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+            bottom: -200px;
+            left: -150px;
+        }
+
+        .orb-teal {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(20, 184, 166, 0.08) 0%, transparent 70%);
+            top: 40%;
+            right: 10%;
+        }
+
+        .orb-lavender {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+            top: 10%;
+            left: 5%;
+        }
+
+        /* Floating dots */
+        .floating-dots {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(45, 91, 255, 0.25);
+            border-radius: 50%;
+        }
+
+        .dot:nth-child(1) { top: 15%; left: 20%; width: 8px; height: 8px; }
+        .dot:nth-child(2) { top: 35%; left: 70%; }
+        .dot:nth-child(3) { top: 55%; left: 35%; width: 4px; height: 4px; }
+        .dot:nth-child(4) { top: 70%; left: 60%; width: 10px; height: 10px; }
+        .dot:nth-child(5) { top: 25%; left: 50%; width: 5px; height: 5px; }
+        .dot:nth-child(6) { top: 80%; left: 25%; }
+        .dot:nth-child(7) { top: 45%; left: 85%; width: 7px; height: 7px; }
+        .dot:nth-child(8) { top: 60%; left: 15%; width: 4px; height: 4px; }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 20px 0;
+            background: rgba(250, 250, 250, 0.8);
+            backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 44px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            position: relative;
+            padding: 6px 0;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            padding: 12px 28px;
+            background: var(--text-primary);
+            border: none;
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-cta:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(45, 91, 255, 0.25);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 160px 48px 100px;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse 50% 40% at 25% 15%, rgba(45, 91, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse 40% 30% at 75% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1.15fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .hero-content {
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 36px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: badge-pulse 2s infinite;
+        }
+
+        @keyframes badge-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(0.85); opacity: 0.7; }
+        }
+
+        .hero-title-wrapper {
+            overflow: hidden;
+            margin-bottom: 28px;
+        }
+
+        .hero h1 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(54px, 6vw, 84px);
+            font-weight: 400;
+            line-height: 1.05;
+            color: var(--text-primary);
+            letter-spacing: -2px;
+        }
+
+        .hero h1 .word {
+            display: inline-block;
+            overflow: hidden;
+        }
+
+        .hero h1 .char {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(100%);
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-lavender) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-description {
+            font-size: 19px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            max-width: 540px;
+            margin-bottom: 48px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn-primary {
+            padding: 18px 38px;
+            background: var(--text-primary);
+            border: none;
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(45, 91, 255, 0.28);
+        }
+
+        .btn-secondary {
+            padding: 18px 38px;
+            background: white;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.35s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text-primary);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Hero Right Side */
+        .hero-visual {
+            position: relative;
+            height: 560px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-visual-container {
+            width: 100%;
+            max-width: 480px;
+            position: relative;
+        }
+
+        .animated-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .shape-circle {
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, rgba(45, 91, 255, 0.15) 0%, rgba(139, 92, 246, 0.08) 100%);
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            filter: blur(40px);
+        }
+
+        .shape-2 {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, transparent 70%);
+            top: 30%;
+            right: 10%;
+            filter: blur(30px);
+        }
+
+        .shape-3 {
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(20, 184, 166, 0.2) 0%, transparent 70%);
+            bottom: 25%;
+            left: 15%;
+            filter: blur(25px);
+        }
+
+        .floating-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .particle-dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(45, 91, 255, 0.4);
+            border-radius: 50%;
+        }
+
+        .particle-dot:nth-child(1) { top: 20%; left: 30%; }
+        .particle-dot:nth-child(2) { top: 40%; left: 70%; width: 6px; height: 6px; }
+        .particle-dot:nth-child(3) { top: 60%; left: 25%; width: 10px; height: 10px; }
+        .particle-dot:nth-child(4) { top: 75%; left: 65%; }
+        .particle-dot:nth-child(5) { top: 35%; left: 45%; width: 5px; height: 5px; }
+
+        .floating-agent-card {
+            position: relative;
+            background: white;
+            border-radius: 28px;
+            padding: 44px;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+        }
+
+        .card-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .card-avatar {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-lavender) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 10px 30px rgba(45, 91, 255, 0.3);
+        }
+
+        .card-title h4 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .card-title span {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .card-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: #dcfce7;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #166534;
+        }
+
+        .card-status-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+        }
+
+        .card-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 28px 0;
+            border-top: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 28px;
+        }
+
+        .card-stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-lavender) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        .card-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-price {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .price-value {
+            font-size: 44px;
+            font-weight: 700;
+        }
+
+        .price-period {
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+
+        .card-action {
+            padding: 14px 28px;
+            background: var(--accent);
+            border: none;
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .card-action:hover {
+            background: var(--accent-lavender);
+            transform: scale(1.05);
+        }
+
+        .floating-pill {
+            position: absolute;
+            padding: 14px 24px;
+            background: white;
+            border-radius: 100px;
+            box-shadow: var(--shadow-md);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .pill-rating {
+            top: -20px;
+            right: -30px;
+        }
+
+        .pill-users {
+            bottom: 80px;
+            left: -50px;
+        }
+
+        /* Sections */
+        section {
+            position: relative;
+            z-index: 1;
+            padding: 140px 48px;
+        }
+
+        .section-header {
+            margin-bottom: 80px;
+            max-width: 600px;
+        }
+
+        .section-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .section-header h2 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(42px, 5vw, 58px);
+            font-weight: 400;
+            line-height: 1.12;
+            margin-bottom: 22px;
+            letter-spacing: -1px;
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Agents Section */
+        .agents-section {
+            background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+        }
+
+        .agents-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .agents-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 64px;
+        }
+
+        .agents-list-display {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .agent-item {
+            display: grid;
+            grid-template-columns: 1fr 240px 1fr 150px;
+            align-items: center;
+            gap: 48px;
+            padding: 40px 48px;
+            background: white;
+            border-radius: 24px;
+            border: 1px solid var(--border-light);
+            transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .agent-item:hover {
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent-subtle);
+            transform: translateY(-6px);
+        }
+
+        .agent-profile {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .agent-avatar {
+            width: 64px;
+            height: 64px;
+            background: var(--accent-light);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            transition: all 0.35s ease;
+        }
+
+        .agent-item:hover .agent-avatar {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-lavender) 100%);
+            box-shadow: 0 10px 30px rgba(45, 91, 255, 0.25);
+        }
+
+        .agent-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .agent-category {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .agent-excerpt {
+            font-size: 15px;
+            color: var(--text-secondary);
+            max-width: 380px;
+            line-height: 1.6;
+        }
+
+        .agent-stats-group {
+            display: flex;
+            gap: 36px;
+        }
+
+        .agent-stat {
+            text-align: center;
+        }
+
+        .agent-stat-metric {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-teal) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+        }
+
+        .agent-stat-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .agent-pricing {
+            text-align: right;
+        }
+
+        .agent-cost {
+            font-size: 34px;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .agent-period {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        /* Process Section */
+        .process-section {
+            background: var(--bg-secondary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .process-section::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -20%;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(45, 91, 255, 0.08) 0%, transparent 70%);
+            filter: blur(60px);
+        }
+
+        .process-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .process-grid-layout {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 28px;
+        }
+
+        .process-step {
+            position: relative;
+            padding: 44px;
+            background: white;
+            border-radius: 28px;
+            border: 1px solid var(--border-light);
+            transition: all 0.45s ease;
+        }
+
+        .process-step:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .process-number-display {
+            font-family: 'Instrument Serif', serif;
+            font-size: 88px;
+            font-weight: 400;
+            color: var(--bg-tertiary);
+            line-height: 1;
+            margin-bottom: 24px;
+        }
+
+        .process-step h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 14px;
+        }
+
+        .process-step p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .process-connector {
+            position: absolute;
+            top: 50%;
+            right: -14px;
+            transform: translateY(-50%);
+            width: 28px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-lavender));
+            opacity: 0.3;
+        }
+
+        /* Categories Section */
+        .categories-section {
+            background: var(--bg-primary);
+        }
+
+        .categories-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .categories-grid-layout {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+        }
+
+        .category-unit {
+            padding: 40px 24px;
+            background: white;
+            border-radius: 22px;
+            border: 1px solid var(--border-light);
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-unit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, var(--accent-light) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .category-unit:hover {
+            border-color: var(--accent);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(45, 91, 255, 0.18);
+        }
+
+        .category-unit:hover::before {
+            opacity: 1;
+        }
+
+        .category-symbol {
+            font-size: 40px;
+            margin-bottom: 20px;
+            display: block;
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-unit h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-unit .count {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Features Section */
+        .features-section {
+            background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+        }
+
+        .features-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 100px;
+            align-items: start;
+        }
+
+        .features-intro {
+            position: sticky;
+            top: 140px;
+        }
+
+        .features-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: 56px;
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: 32px;
+            letter-spacing: -1px;
+        }
+
+        .features-title em {
+            font-style: italic;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-lavender) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .features-desc-text {
+            font-size: 18px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 52px;
+            max-width: 480px;
+        }
+
+        .features-stats-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .feature-stat-box {
+            padding: 32px;
+            background: white;
+            border-radius: 22px;
+            border: 1px solid var(--border-light);
+            text-align: center;
+            transition: all 0.35s ease;
+        }
+
+        .feature-stat-box:hover {
+            border-color: var(--accent-subtle);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-display {
+            font-size: 44px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-teal) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .stat-desc {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .features-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .feature-card-unit {
+            padding: 40px;
+            background: white;
+            border-radius: 28px;
+            border: 1px solid var(--border-light);
+            transition: all 0.45s ease;
+        }
+
+        .feature-card-unit:hover {
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent-subtle);
+            transform: translateY(-6px);
+        }
+
+        .feature-icon-box {
+            width: 60px;
+            height: 60px;
+            background: var(--accent-light);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin-bottom: 26px;
+            transition: all 0.35s ease;
+        }
+
+        .feature-card-unit:hover .feature-icon-box {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-lavender) 100%);
+            box-shadow: 0 12px 32px rgba(45, 91, 255, 0.3);
+        }
+
+        .feature-card-unit h4 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .feature-card-unit p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: var(--text-primary);
+            padding: 180px 48px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse 50% 50% at 50% 0%, rgba(45, 91, 255, 0.2) 0%, transparent 50%),
+                radial-gradient(ellipse 35% 25% at 75% 25%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+                radial-gradient(ellipse 30% 20% at 25% 75%, rgba(20, 184, 166, 0.1) 0%, transparent 50%);
+        }
+
+        .cta-glow {
+            position: absolute;
+            bottom: -150px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 900px;
+            height: 500px;
+            background: radial-gradient(ellipse, rgba(45, 91, 255, 0.2) 0%, transparent 70%);
+            filter: blur(40px);
+        }
+
+        .cta-content-wrapper {
+            max-width: 680px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta-heading {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(48px, 6vw, 64px);
+            font-weight: 400;
+            color: white;
+            margin-bottom: 32px;
+            letter-spacing: -1px;
+        }
+
+        .cta-sub-heading {
+            font-size: 21px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 56px;
+        }
+
+        .cta-form-layout {
+            display: flex;
+            gap: 14px;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .cta-form-layout input {
+            flex: 1;
+            padding: 22px 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            border-radius: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .cta-form-layout input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .cta-form-layout input:focus {
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .cta-form-layout button {
+            padding: 22px 40px;
+            background: var(--accent);
+            border: none;
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .cta-form-layout button:hover {
+            background: #1a47e0;
+            transform: translateY(-3px);
+            box-shadow: 0 16px 40px rgba(45, 91, 255, 0.45);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 100px 48px 48px;
+        }
+
+        .footer-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 80px;
+            margin-bottom: 80px;
+        }
+
+        .footer-brand-area .logo {
+            margin-bottom: 26px;
+            display: inline-block;
+        }
+
+        .footer-brand-area p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.75;
+            max-width: 320px;
+            margin-bottom: 32px;
+        }
+
+        .footer-social-links {
+            display: flex;
+            gap: 14px;
+        }
+
+        .footer-social-links a {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 18px;
+            transition: all 0.35s ease;
+        }
+
+        .footer-social-links a:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .footer-column h4 {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 30px;
+            color: var(--text-primary);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 18px;
+        }
+
+        .footer-column a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-column a:hover {
+            color: var(--accent);
+            padding-left: 4px;
+        }
+
+        .footer-legal {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-top: 44px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 64px;
+            }
+
+            .hero-visual {
+                order: -1;
+                height: 420px;
+            }
+
+            .process-grid-layout {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .categories-grid-layout {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .features-container {
+                grid-template-columns: 1fr;
+                gap: 60px;
+            }
+
+            .features-intro {
+                position: relative;
+                top: 0;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            section {
+                padding: 100px 32px;
+            }
+
+            .agent-item {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .agent-stats-group {
+                justify-content: flex-start;
+            }
+
+            .agent-pricing {
+                text-align: left;
+            }
+
+            .features-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 48px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 24px;
+            }
+
+            .hero {
+                padding: 140px 24px 80px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                text-align: center;
+            }
+
+            .hero-visual {
+                display: none;
+            }
+
+            .process-grid-layout {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .process-connector {
+                display: none;
+            }
+
+            .categories-grid-layout {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .features-stats-bar {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-form-layout {
+                flex-direction: column;
+            }
+
+            .cta-form-layout button {
+                width: 100%;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .footer-legal {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+        }
+
+        /* GSAP Animation Classes */
+        .anim-fade-up {
+            opacity: 0;
+            transform: translateY(60px);
+        }
+
+        .anim-fade-left {
+            opacity: 0;
+            transform: translateX(-60px);
+        }
+
+        .anim-fade-right {
+            opacity: 0;
+            transform: translateX(60px);
+        }
+
+        .anim-scale-in {
+            opacity: 0;
+            transform: scale(0.85);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Canvas -->
+    <div class="bg-canvas">
+        <div class="bg-gradient-layer"></div>
+        <div class="bg-blob-section">
+            <div class="floating-orb orb-blue"></div>
+            <div class="floating-orb orb-purple"></div>
+            <div class="floating-orb orb-teal"></div>
+            <div class="floating-orb orb-lavender"></div>
+        </div>
+        <div class="floating-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">AIYU<span>BOT</span></div>
+            <ul class="nav-links">
+                <li><a href="#agents">Agents</a></li>
+                <li><a href="#process">Process</a></li>
+                <li><a href="#categories">Categories</a></li>
+                <li><a href="#features">Features</a></li>
+            </ul>
+            <button class="nav-cta">Get Started</button>
+            <button class="mobile-menu-btn">☰</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge anim-fade-up">
+                    <span class="badge-dot"></span>
+                    Over 500+ AI Agents Available
+                </div>
+                <div class="hero-title-wrapper">
+                    <h1 class="anim-fade-up"><span class="word">Discover & Deploy</span> <em>Intelligent</em> <span class="word">AI Agents</span></h1>
+                </div>
+                <p class="hero-description anim-fade-up">Your gateway to premium AI agents. Browse hundreds of specialized solutions, purchase instantly, and deploy seamlessly across your applications.</p>
+                <div class="hero-buttons anim-fade-up">
+                    <button class="btn-primary">Explore Marketplace</button>
+                    <button class="btn-secondary">Watch Demo</button>
+                </div>
+            </div>
+            <div class="hero-visual anim-fade-right">
+                <div class="hero-visual-container">
+                    <div class="animated-shapes">
+                        <div class="shape-circle shape-1"></div>
+                        <div class="shape-circle shape-2"></div>
+                        <div class="shape-circle shape-3"></div>
+                        <div class="floating-particles">
+                            <div class="particle-dot"></div>
+                            <div class="particle-dot"></div>
+                            <div class="particle-dot"></div>
+                            <div class="particle-dot"></div>
+                            <div class="particle-dot"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="floating-agent-card">
+                    <div class="card-top">
+                        <div class="card-info">
+                            <div class="card-avatar">💻</div>
+                            <div class="card-title">
+                                <h4>Codex Pro</h4>
+                                <span>Development Agent</span>
+                            </div>
+                        </div>
+                        <div class="card-status">
+                            <span class="card-status-dot"></span>
+                            Active
+                        </div>
+                    </div>
+                    <div class="card-stats-grid">
+                        <div class="card-stat-item">
+                            <span class="stat-value">98%</span>
+                            <span class="stat-label">Accuracy</span>
+                        </div>
+                        <div class="card-stat-item">
+                            <span class="stat-value">50+</span>
+                            <span class="stat-label">Languages</span>
+                        </div>
+                        <div class="card-stat-item">
+                            <span class="stat-value">0.2s</span>
+                            <span class="stat-label">Latency</span>
+                        </div>
+                    </div>
+                    <div class="card-bottom">
+                        <div class="card-price">
+                            <span class="price-value">$49</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                        <button class="card-action">Get Started</button>
+                    </div>
+                    <div class="floating-pill pill-rating">4.9 ★ Rating</div>
+                    <div class="floating-pill pill-users">10K+ Users</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Agents -->
+    <section class="agents-section" id="agents">
+        <div class="agents-container">
+            <div class="agents-header-bar">
+                <div class="section-header anim-fade-up">
+                    <span class="section-label">Featured</span>
+                    <h2>Popular AI Agents</h2>
+                </div>
+            </div>
+            <div class="agents-list-display">
+                <div class="agent-item anim-fade-up">
+                    <div class="agent-profile">
+                        <div class="agent-avatar">💻</div>
+                        <div>
+                            <div class="agent-title">Codex Pro</div>
+                            <div class="agent-category">Development</div>
+                        </div>
+                    </div>
+                    <div class="agent-excerpt">Advanced coding interface with multi-language synthesis and autonomous debugging capabilities.</div>
+                    <div class="agent-stats-group">
+                        <div class="agent-stat">
+                            <span class="agent-stat-metric">98%</span>
+                            <span class="agent-stat-label">Accuracy</span>
+                        </div>
+                        <div class="agent-stat">
+                            <span class="agent-stat-metric">50+</span>
+                            <span class="agent-stat-label">Languages</span>
+                        </div>
+                    </div>
+                    <div class="agent-pricing">
+                        <span class="agent-cost">$49</span>
+                        <span class="agent-period">/month</span>
+                    </div>
+                </div>
+
+                <div class="agent-item anim-fade-up">
+                    <div class="agent-profile">
+                        <div class="agent-avatar">📊</div>
+                        <div>
+                            <div class="agent-title">DataMind</div>
+                            <div class="agent-category">Analytics</div>
+                        </div>
+                    </div>
+                    <div class="agent-excerpt">Predictive analytics engine with real-time visualization and trend forecasting.</div>
+                    <div class="agent-stats-group">
+                        <div class="agent-stat">
+                            <span class="agent-stat-metric">99%</span>
+                            <span class="agent-stat-label">Precision</span>
+                        </div>
+                        <div class="agent-stat">
+                            <span class="agent-stat-metric">PB</span>
+                            <span class="agent-stat-label">Capacity</span>
+                        </div>
+                    </div>
+                    <div class="agent-pricing">
+                        <span class="agent-cost">$79</span>
+                        <span class="agent-period">/month</span>
+                    </div>
+                </div>
+
+                <div class="agent-item anim-fade-up">
+                    <div class="agent-profile">
+                        <div class="agent-avatar">🎨</div>
+                        <div>
+                            <div class="agent-title">CreativeFlow</div>
+                            <div class="agent-category">Content</div>
+                        </div>
+                    </div>
+                    <div class="agent-excerpt">AI-powered creative assistant for design, writing, and multimedia content generation.</div>
+                    <div class="agent-stats-group">
+                        <div class="agent-stat">
+                            <span class="agent-stat-metric">95%</span>
+                            <span class="agent-stat-label">Quality</span>
+                        </div>
+                        <div class="agent-stat">
+                            <span class="agent-stat-metric">∞</span>
+                            <span class="agent-stat-label">Formats</span>
+                        </div>
+                    </div>
+                    <div class="agent-pricing">
+                        <span class="agent-cost">$59</span>
+                        <span class="agent-period">/month</span>
+                    </div>
+                </div>
+
+                <div class="agent-item anim-fade-up">
+                    <div class="agent-profile">
+                        <div class="agent-avatar">🔒</div>
+                        <div>
+                            <div class="agent-title">SecureGuard</div>
+                            <div class="agent-category">Security</div>
+                        </div>
+                    </div>
+                    <div class="agent-excerpt">Enterprise-grade cybersecurity agent with threat detection and mitigation features.</div>
+                    <div class="agent-stats-group">
+                        <div class="agent-stat">
+                            <span class="agent-stat-metric">100%</span>
+                            <span class="agent-stat-label">Protection</span>
+                        </div>
+                        <div class="agent-stat">
+                            <span class="agent-stat-metric">24/7</span>
+                            <span class="agent-stat-label">Monitoring</span>
+                        </div>
+                    </div>
+                    <div class="agent-pricing">
+                        <span class="agent-cost">$99</span>
+                        <span class="agent-period">/month</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="process-section" id="process">
+        <div class="process-container">
+            <div class="section-header anim-fade-up">
+                <span class="section-label">Process</span>
+                <h2>How It Works</h2>
+                <p>Get started with AI agents in four simple steps</p>
+            </div>
+            <div class="process-grid-layout">
+                <div class="process-step anim-scale-in">
+                    <div class="process-number-display">01</div>
+                    <h3>Browse Agents</h3>
+                    <p>Explore our curated collection of specialized AI agents across various categories and use cases.</p>
+                    <div class="process-connector"></div>
+                </div>
+                <div class="process-step anim-scale-in">
+                    <div class="process-number-display">02</div>
+                    <h3>Select & Purchase</h3>
+                    <p>Choose the perfect agent for your needs and complete a secure purchase in just a few clicks.</p>
+                    <div class="process-connector"></div>
+                </div>
+                <div class="process-step anim-scale-in">
+                    <div class="process-number-display">03</div>
+                    <h3>Instant Deploy</h3>
+                    <p>Deploy your AI agent immediately with our streamlined integration process and API access.</p>
+                    <div class="process-connector"></div>
+                </div>
+                <div class="process-step anim-scale-in">
+                    <div class="process-number-display">04</div>
+                    <h3>Scale Up</h3>
+                    <p>Monitor performance and easily scale your operations as your needs evolve.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="categories-section" id="categories">
+        <div class="categories-container">
+            <div class="section-header anim-fade-up">
+                <span class="section-label">Browse</span>
+                <h2>Categories</h2>
+                <p>Find the perfect AI agent for your specific requirements</p>
+            </div>
+            <div class="categories-grid-layout">
+                <div class="category-unit anim-scale-in">
+                    <span class="category-symbol">💻</span>
+                    <h4>Development</h4>
+                    <span class="count">120+ Agents</span>
+                </div>
+                <div class="category-unit anim-scale-in">
+                    <span class="category-symbol">📊</span>
+                    <h4>Analytics</h4>
+                    <span class="count">85+ Agents</span>
+                </div>
+                <div class="category-unit anim-scale-in">
+                    <span class="category-symbol">🎨</span>
+                    <h4>Creative</h4>
+                    <span class="count">95+ Agents</span>
+                </div>
+                <div class="category-unit anim-scale-in">
+                    <span class="category-symbol">🔒</span>
+                    <h4>Security</h4>
+                    <span class="count">60+ Agents</span>
+                </div>
+                <div class="category-unit anim-scale-in">
+                    <span class="category-symbol">💬</span>
+                    <h4>Support</h4>
+                    <span class="count">110+ Agents</span>
+                </div>
+                <div class="category-unit anim-scale-in">
+                    <span class="category-symbol">📝</span>
+                    <h4>Writing</h4>
+                    <span class="count">130+ Agents</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features-section" id="features">
+        <div class="features-container">
+            <div class="features-intro">
+                <h2 class="features-title anim-fade-left">Why Choose <em>AIYUBOT</em></h2>
+                <p class="features-desc-text anim-fade-left">We're committed to providing the most reliable, scalable, and intelligent AI agent solutions for businesses of all sizes.</p>
+                <div class="features-stats-bar">
+                    <div class="feature-stat-box anim-fade-up">
+                        <span class="stat-display">500+</span>
+                        <span class="stat-desc">Active Agents</span>
+                    </div>
+                    <div class="feature-stat-box anim-fade-up">
+                        <span class="stat-display">50K+</span>
+                        <span class="stat-desc">Users</span>
+                    </div>
+                    <div class="feature-stat-box anim-fade-up">
+                        <span class="stat-display">99.9%</span>
+                        <span class="stat-desc">Uptime</span>
+                    </div>
+                </div>
+            </div>
+            <div class="features-cards">
+                <div class="feature-card-unit anim-fade-up">
+                    <div class="feature-icon-box">⚡</div>
+                    <h4>Instant Deployment</h4>
+                    <p>Get your AI agent up and running in minutes with our streamlined process.</p>
+                </div>
+                <div class="feature-card-unit anim-fade-up">
+                    <div class="feature-icon-box">🔐</div>
+                    <h4>Enterprise Security</h4>
+                    <p>Your data is protected with bank-level encryption and compliance.</p>
+                </div>
+                <div class="feature-card-unit anim-fade-up">
+                    <div class="feature-icon-box">📈</div>
+                    <h4>Scalable Solutions</h4>
+                    <p>From startup to enterprise, our agents grow with your business needs.</p>
+                </div>
+                <div class="feature-card-unit anim-fade-up">
+                    <div class="feature-icon-box">🎯</div>
+                    <h4>Expert Support</h4>
+                    <p>24/7 dedicated support team ready to help you optimize operations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-glow"></div>
+        <div class="cta-content-wrapper anim-fade-up">
+            <h2 class="cta-heading">Ready to Transform Your Workflow?</h2>
+            <p class="cta-sub-heading">Join thousands of businesses already leveraging AIYUBOT agents</p>
+            <div class="cta-form-layout">
+                <input type="email" placeholder="Enter your email">
+                <button>Get Started Free</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand-area">
+                <div class="logo">AIYU<span>BOT</span></div>
+                <p>The premier marketplace for discovering, purchasing, and deploying intelligent AI agents.</p>
+                <div class="footer-social-links">
+                    <a href="#">𝕏</a>
+                    <a href="#">in</a>
+                    <a href="#">▶</a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h4>Marketplace</h4>
+                <ul>
+                    <li><a href="#">Browse Agents</a></li>
+                    <li><a href="#">Categories</a></li>
+                    <li><a href="#">Pricing</a></li>
+                    <li><a href="#">Featured</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Press</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">API Reference</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-legal">
+            <span>© 2026 AIYUBOT. All rights reserved.</span>
+            <span>Privacy Policy · Terms of Service</span>
+        </div>
+    </footer>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+        // Hero visual animations
+        gsap.to('.shape-1', {
+            scale: 1.15,
+            opacity: 0.8,
+            duration: 5,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+
+        gsap.to('.shape-2', {
+            y: -30,
+            scale: 1.1,
+            duration: 4,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+
+        gsap.to('.shape-3', {
+            x: 20,
+            scale: 1.2,
+            duration: 4.5,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+
+        gsap.utils.toArray('.particle-dot').forEach((dot, i) => {
+            gsap.to(dot, {
+                y: -20 - Math.random() * 40,
+                opacity: 0,
+                duration: 3 + Math.random() * 2,
+                repeat: -1,
+                yoyo: true,
+                ease: 'sine.inOut',
+                delay: i * 0.5
+            });
+        });
+
+        // Floating orb animations
+        gsap.to('.orb-blue', {
+            x: 250,
+            y: 180,
+            rotation: 50,
+            duration: 28,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+
+        gsap.to('.orb-purple', {
+            x: -180,
+            y: -120,
+            rotation: -40,
+            duration: 35,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+
+        gsap.to('.orb-teal', {
+            x: -120,
+            y: 80,
+            scale: 1.2,
+            duration: 24,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+
+        gsap.to('.orb-lavender', {
+            x: 100,
+            y: -60,
+            scale: 1.25,
+            duration: 20,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+
+        // Floating dots animation
+        gsap.utils.toArray('.dot').forEach((dot, i) => {
+            gsap.to(dot, {
+                y: -40 - Math.random() * 60,
+                opacity: 0,
+                duration: 4 + Math.random() * 3,
+                repeat: -1,
+                yoyo: true,
+                ease: 'sine.inOut',
+                delay: i * 0.4
+            });
+        });
+
+        // Hero text animation
+        const heroTitle = document.querySelector('.hero h1');
+        if (heroTitle) {
+            const text = heroTitle.innerText;
+            heroTitle.innerHTML = '';
+            
+            const chars = text.split('').map(char => {
+                const span = document.createElement('span');
+                span.className = 'char';
+                span.textContent = char === ' ' ? '\u00A0' : char;
+                return span;
+            });
+            
+            heroTitle.append(...chars);
+            
+            gsap.to('.hero h1 .char', {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                stagger: 0.02,
+                ease: 'power3.out',
+                delay: 0.3
+            });
+        }
+
+        // Floating card animation
+        gsap.to('.floating-agent-card', {
+            y: -18,
+            duration: 4.5,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+
+        // Floating pills animation
+        gsap.to('.pill-rating', {
+            y: -12,
+            x: 8,
+            duration: 3.5,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+
+        gsap.to('.pill-users', {
+            y: -10,
+            x: -6,
+            duration: 4,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut',
+            delay: 1
+        });
+
+        // Scroll-based parallax
+        gsap.utils.toArray('.floating-orb').forEach((orb, i) => {
+            gsap.to(orb, {
+                scrollTrigger: {
+                    trigger: 'body',
+                    start: 'top top',
+                    end: 'bottom bottom',
+                    scrub: 2
+                },
+                y: i % 2 === 0 ? 200 : -200,
+                ease: 'none'
+            });
+        });
+
+        // Scroll animations
+        const fadeUpEls = document.querySelectorAll('.anim-fade-up');
+        fadeUpEls.forEach((el, i) => {
+            gsap.to(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse'
+                },
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                delay: i * 0.08,
+                ease: 'power3.out'
+            });
+        });
+
+        const fadeLeftEls = document.querySelectorAll('.anim-fade-left');
+        fadeLeftEls.forEach((el) => {
+            gsap.to(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse'
+                },
+                opacity: 1,
+                x: 0,
+                duration: 1.2,
+                ease: 'power3.out'
+            });
+        });
+
+        const fadeRightEls = document.querySelectorAll('.anim-fade-right');
+        fadeRightEls.forEach((el) => {
+            gsap.to(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse'
+                },
+                opacity: 1,
+                x: 0,
+                duration: 1,
+                ease: 'power3.out'
+            });
+        });
+
+        const scaleInEls = document.querySelectorAll('.anim-scale-in');
+        scaleInEls.forEach((el, i) => {
+            gsap.to(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: 'top 88%',
+                    toggleActions: 'play none none reverse'
+                },
+                opacity: 1,
+                scale: 1,
+                duration: 0.8,
+                delay: i * 0.06,
+                ease: 'back.out(1.4)'
+            });
+        });
+
+        gsap.set('.anim-fade-up', { opacity: 0, y: 60 });
+        gsap.set('.anim-fade-left', { opacity: 0, x: -60 });
+        gsap.set('.anim-fade-right', { opacity: 0, x: 60 });
+        gsap.set('.anim-scale-in', { opacity: 0, scale: 0.85 });
+
+        // Button hover effects
+        const allButtons = document.querySelectorAll('.btn-primary, .btn-secondary, .nav-cta, .card-action, .cta-form-layout button');
+        allButtons.forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                gsap.to(btn, { scale: 1.04, duration: 0.25, ease: 'power2.out' });
+            });
+            btn.addEventListener('mouseleave', () => {
+                gsap.to(btn, { scale: 1, duration: 0.25, ease: 'power2.out' });
+            });
+        });
+
+        // Agent card hover
+        const agentCards = document.querySelectorAll('.agent-item');
+        agentCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                gsap.to(card, { 
+                    y: -8, 
+                    boxShadow: 'var(--shadow-lg)',
+                    duration: 0.4, 
+                    ease: 'power2.out' 
+                });
+            });
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, { 
+                    y: 0, 
+                    boxShadow: 'none',
+                    duration: 0.4, 
+                    ease: 'power2.out' 
+                });
+            });
+        });
+
+        // Category item hover
+        const categoryItems = document.querySelectorAll('.category-unit');
+        categoryItems.forEach((item, i) => {
+            item.addEventListener('mouseenter', () => {
+                gsap.to(item, { 
+                    y: -12, 
+                    duration: 0.4, 
+                    ease: 'power2.out' 
+                });
+            });
+            item.addEventListener('mouseleave', () => {
+                gsap.to(item, { 
+                    y: 0, 
+                    duration: 0.4, 
+                    ease: 'power2.out' 
+                });
+            });
+        });
+
+        // Process step hover
+        const processSteps = document.querySelectorAll('.process-step');
+        processSteps.forEach(step => {
+            step.addEventListener('mouseenter', () => {
+                gsap.to(step, { 
+                    y: -12, 
+                    duration: 0.4, 
+                    ease: 'power2.out' 
+                });
+            });
+            step.addEventListener('mouseleave', () => {
+                gsap.to(step, { 
+                    y: 0, 
+                    duration: 0.4, 
+                    ease: 'power2.out' 
+                });
+            });
+        });
+
+        // Feature card hover
+        const featureCards = document.querySelectorAll('.feature-card-unit');
+        featureCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                gsap.to(card, { 
+                    y: -8, 
+                    duration: 0.4, 
+                    ease: 'power2.out' 
+                });
+            });
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, { 
+                    y: 0, 
+                    duration: 0.4, 
+                    ease: 'power2.out' 
+                });
+            });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    gsap.to(window, {
+                        duration: 1.2,
+                        scrollTo: { y: target.offsetTop - 80 },
+                        ease: 'power3.inOut'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
