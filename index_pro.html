@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIYUBOT - Discover, Buy & Deploy AI Agents</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #fafafa;
+            --bg-tertiary: #f5f5f5;
+            --text-primary: #0d0d0d;
+            --text-secondary: #525252;
+            --text-muted: #8a8a8a;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --accent-warm: #f97316;
+            --border: #e5e5e5;
+            --border-light: #f0f0f0;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.08);
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 32px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            line-height: 1.1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        section {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Background Animation */
+        .bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+        }
+
+        .bg-shape-1 {
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            top: -200px;
+            right: -100px;
+        }
+
+        .bg-shape-2 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            bottom: 20%;
+            left: -100px;
+        }
+
+        .bg-shape-3 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            top: 60%;
+            right: 20%;
+        }
+
+        /* ==================== NAV ==================== */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 0;
+            z-index: 100;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-mark {
+            width: 32px;
+            height: 32px;
+            background: var(--text-primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-mark span {
+            color: white;
+            font-size: 14px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-cta {
+            padding: 10px 20px;
+            background: var(--text-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ==================== HERO ==================== */
+        .hero {
+            min-height: 100vh;
+            padding: 140px 0 80px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-content {
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--accent-light);
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--accent);
+            margin-bottom: 24px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .hero-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 5vw, 64px);
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--accent) 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-desc {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 36px;
+            max-width: 500px;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .btn-primary {
+            padding: 16px 32px;
+            background: var(--text-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            padding: 16px 32px;
+            background: white;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--text-secondary);
+        }
+
+        .hero-visual {
+            position: relative;
+            height: 500px;
+            opacity: 0;
+            transform: translateX(50px);
+        }
+
+        .hero-card {
+            position: absolute;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        .hero-card-1 {
+            width: 340px;
+            height: 380px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+
+        .hero-card-1::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 180px;
+            background: linear-gradient(135deg, var(--accent-light), #ede9fe);
+        }
+
+        .card-header {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-avatar {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-user-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .card-user-info span {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .card-body {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 24px;
+            background: white;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .card-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .card-stat:last-child {
+            border-bottom: none;
+        }
+
+        .card-stat-label {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .card-stat-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .hero-card-2 {
+            width: 220px;
+            height: 160px;
+            top: 20%;
+            right: 0;
+            z-index: 1;
+            padding: 20px;
+        }
+
+        .floating-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+        }
+
+        .floating-badge-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .floating-badge-text h5 {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .floating-badge-text span {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .chart-mini {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 40px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: var(--accent-light);
+            border-radius: 2px;
+        }
+
+        .chart-bar:nth-child(1) { height: 30%; }
+        .chart-bar:nth-child(2) { height: 50%; }
+        .chart-bar:nth-child(3) { height: 40%; }
+        .chart-bar:nth-child(4) { height: 70%; }
+        .chart-bar:nth-child(5) { height: 60%; }
+        .chart-bar:nth-child(6) { height: 80%; }
+
+        .hero-card-3 {
+            width: 180px;
+            height: 120px;
+            bottom: 15%;
+            left: -20px;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .rating-star {
+            font-size: 32px;
+        }
+
+        .rating-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .hero-card-3 span:last-child {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ==================== FEATURES ZIG-ZAG ==================== */
+        .features {
+            padding: 120px 0;
+            position: relative;
+        }
+
+        .features-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-label {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .features-header h2 {
+            font-size: clamp(32px, 4vw, 48px);
+            color: var(--text-primary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .feature-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            margin-bottom: 120px;
+        }
+
+        .feature-row:nth-child(even) {
+            direction: rtl;
+        }
+
+        .feature-row:nth-child(even) .feature-content {
+            direction: ltr;
+        }
+
+        .feature-content {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .feature-content h3 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .feature-content p {
+            font-size: 17px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        .feature-list li::before {
+            content: '✓';
+            width: 20px;
+            height: 20px;
+            background: var(--accent-light);
+            color: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .feature-visual {
+            position: relative;
+            height: 400px;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        .feature-card-img {
+            width: 100%;
+            height: 280px;
+            background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+        }
+
+        .feature-card-body {
+            padding: 24px;
+        }
+
+        .feature-card-body h4 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .feature-card-body p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* ==================== STICKY SCROLL ==================== */
+        .sticky-section {
+            padding: 120px 0;
+            background: var(--bg-secondary);
+        }
+
+        .sticky-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            position: relative;
+        }
+
+        .sticky-left {
+            position: sticky;
+            top: 120px;
+            height: fit-content;
+        }
+
+        .sticky-left h2 {
+            font-size: clamp(32px, 4vw, 48px);
+            margin-bottom: 20px;
+        }
+
+        .sticky-left p {
+            font-size: 17px;
+            color: var(--text-secondary);
+        }
+
+        .sticky-right {
+            position: relative;
+        }
+
+        .sticky-item {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-md);
+            opacity: 0;
+            transform: translateX(30px);
+        }
+
+        .sticky-item-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .sticky-item-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--accent-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .sticky-item h4 {
+            font-size: 18px;
+        }
+
+        .sticky-item p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ==================== TIMELINE ==================== */
+        .timeline-section {
+            padding: 120px 0;
+            position: relative;
+        }
+
+        .timeline-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .timeline-header h2 {
+            font-size: clamp(32px, 4vw, 48px);
+            margin-bottom: 16px;
+        }
+
+        .timeline-header p {
+            font-size: 17px;
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+            transform: translateX(-50%);
+        }
+
+        .timeline-progress {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 2px;
+            background: var(--accent);
+            transform: translateX(-50%);
+            height: 0%;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row-reverse;
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            padding-right: 60px;
+            padding-left: 0;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            padding-left: 60px;
+        }
+
+        .timeline-content {
+            width: 50%;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 3px solid var(--border);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            transition: all 0.3s;
+        }
+
+        .timeline-item.active .timeline-dot {
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 6px var(--accent-light);
+        }
+
+        .timeline-content h3 {
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+
+        .timeline-content p {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        /* ==================== HORIZONTAL SCROLL ==================== */
+        .showcase {
+            padding: 120px 0;
+            background: var(--text-primary);
+            overflow: hidden;
+        }
+
+        .showcase-header {
+            text-align: center;
+            margin-bottom: 60px;
+            color: white;
+        }
+
+        .showcase-header h2 {
+            font-size: clamp(32px, 4vw, 48px);
+            margin-bottom: 16px;
+        }
+
+        .showcase-header p {
+            font-size: 17px;
+            opacity: 0.7;
+        }
+
+        .showcase-track {
+            display: flex;
+            gap: 24px;
+            cursor: grab;
+        }
+
+        .showcase-card {
+            flex-shrink: 0;
+            width: 380px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            transition: all 0.3s;
+        }
+
+        .showcase-card:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-4px);
+        }
+
+        .showcase-card-img {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border-radius: var(--radius-md);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+            opacity: 0.8;
+        }
+
+        .showcase-card h4 {
+            font-size: 20px;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .showcase-card p {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 16px;
+        }
+
+        .showcase-card-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .showcase-tag {
+            padding: 4px 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 100px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* ==================== CTA ==================== */
+        .cta-section {
+            padding: 120px 0;
+            text-align: center;
+        }
+
+        .cta-inner {
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .cta-section h2 {
+            font-size: clamp(36px, 5vw, 56px);
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        /* ==================== FOOTER ==================== */
+        .footer {
+            padding: 60px 0 40px;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .footer-brand p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 16px;
+            max-width: 280px;
+        }
+
+        .footer-col h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col li {
+            margin-bottom: 12px;
+        }
+
+        .footer-col a {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-col a:hover {
+            color: var(--text-primary);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 40px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .footer-bottom p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 16px;
+        }
+
+        .footer-social a {
+            width: 36px;
+            height: 36px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .footer-social a:hover {
+            background: var(--text-primary);
+            color: white;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 1024px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .hero-visual {
+                height: 400px;
+                order: -1;
+            }
+
+            .feature-row {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .feature-row:nth-child(even) {
+                direction: ltr;
+            }
+
+            .sticky-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sticky-left {
+                position: relative;
+                top: 0;
+                margin-bottom: 40px;
+            }
+
+            .timeline-line, .timeline-progress {
+                left: 20px;
+            }
+
+            .timeline-item, .timeline-item:nth-child(odd) {
+                flex-direction: row;
+                text-align: left;
+            }
+
+            .timeline-content, .timeline-item:nth-child(odd) .timeline-content {
+                width: 100%;
+                padding-left: 50px;
+                padding-right: 0;
+            }
+
+            .timeline-dot {
+                left: 20px;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 120px 0 60px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero-desc {
+                font-size: 16px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .hero-visual {
+                height: 300px;
+            }
+
+            .hero-card-1 {
+                width: 260px;
+                height: 300px;
+            }
+
+            .hero-card-2 {
+                width: 160px;
+                height: 120px;
+                top: 10%;
+            }
+
+            .hero-card-3 {
+                width: 140px;
+                height: 90px;
+                bottom: 10%;
+                left: -10px;
+            }
+
+            .feature-visual {
+                height: 300px;
+            }
+
+            .showcase-card {
+                width: 300px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-canvas">
+        <div class="bg-shape bg-shape-1"></div>
+        <div class="bg-shape bg-shape-2"></div>
+        <div class="bg-shape bg-shape-3"></div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="nav">
+        <div class="container nav-inner">
+            <a href="#" class="logo">
+                <div class="logo-mark"><span>A</span></div>
+                AIYUBOT
+            </a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#showcase">Showcase</a>
+                <a href="#pricing">Pricing</a>
+                <button class="nav-cta">Get Started</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span>Trusted by 10,000+ developers</span>
+                    </div>
+                    <h1>Discover, Buy & Deploy <span>AI Agents</span></h1>
+                    <p class="hero-desc">The premier marketplace for pre-built AI agents. Browse hundreds of verified agents, purchase ready-to-deploy solutions, and scale your automation.</p>
+                    <div class="hero-buttons">
+                        <button class="btn-primary">
+                            Explore Marketplace
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <button class="btn-secondary">View Documentation</button>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="hero-card hero-card-1">
+                        <div class="card-header">
+                            <div class="card-avatar">🤖</div>
+                            <div class="card-user-info">
+                                <h4>Data Analyst Agent</h4>
+                                <span>by TechFlow AI</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-stat">
+                                <span class="card-stat-label">Active Users</span>
+                                <span class="card-stat-value">2,847</span>
+                            </div>
+                            <div class="card-stat">
+                                <span class="card-stat-label">Rating</span>
+                                <span class="card-stat-value">4.9 ★</span>
+                            </div>
+                            <div class="card-stat">
+                                <span class="card-stat-label">Deploys</span>
+                                <span class="card-stat-value">15.2K</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hero-card hero-card-2">
+                        <div class="floating-badge">
+                            <div class="floating-badge-icon">📊</div>
+                            <div class="floating-badge-text">
+                                <h5>98.5%</h5>
+                                <span>Accuracy Rate</span>
+                            </div>
+                        </div>
+                        <div class="chart-mini">
+                            <div class="chart-bar"></div>
+                            <div class="chart-bar"></div>
+                            <div class="chart-bar"></div>
+                            <div class="chart-bar"></div>
+                            <div class="chart-bar"></div>
+                            <div class="chart-bar"></div>
+                        </div>
+                    </div>
+                    <div class="hero-card hero-card-3">
+                        <span class="rating-star">⭐</span>
+                        <span class="rating-text">Top Rated</span>
+                        <span>Marketplace</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Zig-Zag -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="features-header">
+                <span class="section-label">Platform Features</span>
+                <h2>Everything you need to build with AI</h2>
+            </div>
+
+            <div class="feature-row">
+                <div class="feature-content">
+                    <h3>Verified Agent Marketplace</h3>
+                    <p>Browse hundreds of pre-built, tested AI agents from trusted developers. Every agent is verified for quality, security, and performance.</p>
+                    <ul class="feature-list">
+                        <li>Detailed agent profiles with capabilities</li>
+                        <li>Verified ratings and review system</li>
+                        <li>One-click deployment to your infrastructure</li>
+                        <li>Regular updates and maintenance</li>
+                    </ul>
+                </div>
+                <div class="feature-visual">
+                    <div class="feature-card">
+                        <div class="feature-card-img">🛒</div>
+                        <div class="feature-card-body">
+                            <h4>Browse & Compare</h4>
+                            <p>Filter by use case, pricing, rating, and integration options</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-row">
+                <div class="feature-content">
+                    <h3>Secure Deployment</h3>
+                    <p>Deploy agents to your infrastructure with enterprise-grade security. Your data never leaves your control.</p>
+                    <ul class="feature-list">
+                        <li>End-to-end encryption for all communications</li>
+                        <li>SOC 2 compliant infrastructure options</li>
+                        <li>Custom API keys and access controls</li>
+                        <li>Full audit logs and compliance reporting</li>
+                    </ul>
+                </div>
+                <div class="feature-visual">
+                    <div class="feature-card">
+                        <div class="feature-card-img">🔐</div>
+                        <div class="feature-card-body">
+                            <h4>Enterprise Security</h4>
+                            <p>Bank-level encryption and compliance built-in</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-row">
+                <div class="feature-content">
+                    <h3>Developer-First API</h3>
+                    <p>Integrate AI agents into your applications with our simple, powerful REST API and SDKs for all major languages.</p>
+                    <ul class="feature-list">
+                        <li>RESTful API with comprehensive documentation</li>
+                        <li>SDKs for Python, JavaScript, Go, and more</li>
+                        <li>Webhooks for real-time event handling</li>
+                        <li>Sandbox environment for testing</li>
+                    </ul>
+                </div>
+                <div class="feature-visual">
+                    <div class="feature-card">
+                        <div class="feature-card-img">⚡</div>
+                        <div class="feature-card-body">
+                            <h4>Quick Integration</h4>
+                            <p>Get up and running in minutes, not days</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sticky Scroll -->
+    <section class="sticky-section">
+        <div class="container">
+            <div class="sticky-grid">
+                <div class="sticky-left">
+                    <span class="section-label">Why Choose Us</span>
+                    <h2>Built for teams who ship</h2>
+                    <p>Whether you're a startup or enterprise, our platform scales with your needs.</p>
+                </div>
+                <div class="sticky-right">
+                    <div class="sticky-item">
+                        <div class="sticky-item-header">
+                            <div class="sticky-item-icon">🚀</div>
+                            <h4>Lightning Fast Setup</h4>
+                        </div>
+                        <p>Get started in minutes with our intuitive dashboard. No complex configuration or DevOps required.</p>
+                    </div>
+                    <div class="sticky-item">
+                        <div class="sticky-item-header">
+                            <div class="sticky-item-icon">📈</div>
+                            <h4>Scale Without Limits</h4>
+                        </div>
+                        <p>Handle millions of requests with our globally distributed infrastructure. Auto-scaling included.</p>
+                    </div>
+                    <div class="sticky-item">
+                        <div class="sticky-item-header">
+                            <div class="sticky-item-icon">💬</div>
+                            <h4>24/7 Expert Support</h4>
+                        </div>
+                        <p>Our team of AI experts is available around the clock to help you debug, optimize, and succeed.</p>
+                    </div>
+                    <div class="sticky-item">
+                        <div class="sticky-item-header">
+                            <div class="sticky-item-icon">🔄</div>
+                            <h4>Seamless Updates</h4>
+                        </div>
+                        <p>Agents are automatically updated with new features and security patches. No maintenance windows.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline -->
+    <section class="timeline-section">
+        <div class="container">
+            <div class="timeline-header">
+                <span class="section-label">How It Works</span>
+                <h2>Get started in 4 simple steps</h2>
+                <p>From sign-up to deployment in minutes</p>
+            </div>
+            <div class="timeline">
+                <div class="timeline-line"></div>
+                <div class="timeline-progress"></div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Create Account</h3>
+                        <p>Sign up for free and explore our marketplace. No credit card required to browse.</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Browse Agents</h3>
+                        <p>Discover pre-built agents or request custom solutions. Filter by your specific needs.</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Purchase & Configure</h3>
+                        <p>Buy your chosen agent and configure it to your requirements with our visual editor.</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Deploy & Scale</h3>
+                        <p>Deploy to your infrastructure with one click. Monitor performance and scale as needed.</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Horizontal Scroll Showcase -->
+    <section class="showcase" id="showcase">
+        <div class="container">
+            <div class="showcase-header">
+                <span class="section-label" style="color: rgba(255,255,255,0.7);">Popular Agents</span>
+                <h2>Trending AI Agents</h2>
+                <p>Discover what developers are building with</p>
+            </div>
+        </div>
+        <div class="showcase-track">
+            <div class="showcase-card">
+                <div class="showcase-card-img">📊</div>
+                <h4>Data Analytics Agent</h4>
+                <p>Automated data processing and insights generation for your business.</p>
+                <div class="showcase-card-tags">
+                    <span class="showcase-tag">Analytics</span>
+                    <span class="showcase-tag">Python</span>
+                </div>
+            </div>
+            <div class="showcase-card">
+                <div class="showcase-card-img">💬</div>
+                <h4>Customer Support Bot</h4>
+                <p>Intelligent chatbot handling customer queries 24/7 with human-like responses.</p>
+                <div class="showcase-card-tags">
+                    <span class="showcase-tag">Support</span>
+                    <span class="showcase-tag">NLP</span>
+                </div>
+            </div>
+            <div class="showcase-card">
+                <div class="showcase-card-img">📝</div>
+                <h4>Content Generator</h4>
+                <p>AI-powered content creation for blogs, social media, and marketing.</p>
+                <div class="showcase-card-tags">
+                    <span class="showcase-tag">Content</span>
+                    <span class="showcase-tag">GPT</span>
+                </div>
+            </div>
+            <div class="showcase-card">
+                <div class="showcase-card-img">🔍</div>
+                <h4>Research Assistant</h4>
+                <p>Automated research and summarization from multiple sources.</p>
+                <div class="showcase-card-tags">
+                    <span class="showcase-tag">Research</span>
+                    <span class="showcase-tag">API</span>
+                </div>
+            </div>
+            <div class="showcase-card">
+                <div class="showcase-card-img">📧</div>
+                <h4>Email Automator</h4>
+                <p>Smart email automation with personalization and follow-ups.</p>
+                <div class="showcase-card-tags">
+                    <span class="showcase-tag">Automation</span>
+                    <span class="showcase-tag">Productivity</span>
+                </div>
+            </div>
+            <div class="showcase-card">
+                <div class="showcase-card-img">🎯</div>
+                <h4>Lead Qualifier</h4>
+                <p>AI-powered lead scoring and qualification for sales teams.</p>
+                <div class="showcase-card-tags">
+                    <span class="showcase-tag">Sales</span>
+                    <span class="showcase-tag">CRM</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-inner">
+                <h2>Ready to build with AI?</h2>
+                <p>Join thousands of developers already building with AIYUBOT. Start free today.</p>
+                <div class="cta-buttons">
+                    <button class="btn-primary">Start Building Free</button>
+                    <button class="btn-secondary">Talk to Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <div class="logo-mark"><span>A</span></div>
+                        AIYUBOT
+                    </a>
+                    <p>The leading marketplace for AI agents. Build faster with pre-trained solutions.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Showcase</a></li>
+                        <li><a href="#">API</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">Community</a></li>
+                        <li><a href="#">Status</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2024 AIYUBOT. All rights reserved.</p>
+                <div class="footer-social">
+                    <a href="#">𝕏</a>
+                    <a href="#">in</a>
+                    <a href="#">◉</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Background shapes animation
+        gsap.to('.bg-shape-1', {
+            x: 100,
+            y: 50,
+            duration: 20,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+
+        gsap.to('.bg-shape-2', {
+            x: -80,
+            y: -40,
+            duration: 25,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+
+        gsap.to('.bg-shape-3', {
+            x: 60,
+            y: 80,
+            duration: 18,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+
+        // Hero animations
+        const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+        heroTl
+            .to('.hero-badge', { opacity: 1, y: 0, duration: 0.8 })
+            .to('.hero h1', { opacity: 1, y: 0, duration: 1 }, '-=0.5')
+            .to('.hero-desc', { opacity: 1, y: 0, duration: 0.8 }, '-=0.6')
+            .to('.hero-buttons', { opacity: 1, y: 0, duration: 0.8 }, '-=0.5')
+            .to('.hero-visual', { opacity: 1, x: 0, duration: 1.2 }, '-=1');
+
+        // Hero cards floating animation
+        gsap.to('.hero-card-1', {
+            y: -15,
+            duration: 4,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+
+        gsap.to('.hero-card-2', {
+            y: 10,
+            duration: 3,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+
+        gsap.to('.hero-card-3', {
+            y: -8,
+            duration: 3.5,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+
+        // Features section animations
+        const featureRows = document.querySelectorAll('.feature-row');
+        
+        featureRows.forEach((row, index) => {
+            const content = row.querySelector('.feature-content');
+            const visual = row.querySelector('.feature-visual');
+            
+            gsap.to(content, {
+                scrollTrigger: {
+                    trigger: row,
+                    start: 'top 80%',
+                    toggleActions: 'play none none reverse'
+                },
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                delay: index * 0.2
+            });
+            
+            gsap.to(visual, {
+                scrollTrigger: {
+                    trigger: row,
+                    start: 'top 80%',
+                    toggleActions: 'play none none reverse'
+                },
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                delay: index * 0.2 + 0.2
+            });
+        });
+
+        // Sticky section animations
+        gsap.utils.toArray('.sticky-item').forEach((item, i) => {
+            gsap.to(item, {
+                scrollTrigger: {
+                    trigger: item,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse'
+                },
+                opacity: 1,
+                x: 0,
+                duration: 0.6,
+                delay: i * 0.15
+            });
+        });
+
+        // Timeline animations
+        const timelineItems = gsap.utils.toArray('.timeline-item');
+        
+        timelineItems.forEach((item, index) => {
+            gsap.to(item.querySelector('.timeline-content'), {
+                scrollTrigger: {
+                    trigger: item,
+                    start: 'top 80%',
+                    toggleActions: 'play none none reverse'
+                },
+                opacity: 1,
+                y: 0,
+                duration: 0.6
+            });
+
+            ScrollTrigger.create({
+                trigger: item,
+                start: 'top 70%',
+                onEnter: () => {
+                    timelineItems.forEach((el, i) => {
+                        if (i <= index) {
+                            el.classList.add('active');
+                        } else {
+                            el.classList.remove('active');
+                        }
+                    });
+                },
+                onLeaveBack: () => {
+                    timelineItems.forEach((el, i) => {
+                        if (i < index) {
+                            el.classList.add('active');
+                        } else {
+                            el.classList.remove('active');
+                        }
+                    });
+                }
+            });
+        });
+
+        // Timeline progress line
+        gsap.to('.timeline-progress', {
+            scrollTrigger: {
+                trigger: '.timeline',
+                start: 'top 80%',
+                end: 'bottom 80%',
+                scrub: true
+            },
+            height: '100%'
+        });
+
+        // Horizontal scroll showcase
+        const showcaseTrack = document.querySelector('.showcase-track');
+        const showcaseSection = document.querySelector('.showcase');
+
+        gsap.to(showcaseTrack, {
+            x: () => -(showcaseTrack.scrollWidth - window.innerWidth + 100),
+            ease: 'none',
+            scrollTrigger: {
+                trigger: showcaseSection,
+                start: 'top top',
+                end: () => '+=' + showcaseTrack.scrollWidth,
+                pin: true,
+                scrub: 1,
+                anticipatePin: 1
+            }
+        });
+
+        // CTA section animation
+        gsap.to('.cta-inner', {
+            scrollTrigger: {
+                trigger: '.cta-section',
+                start: 'top 80%',
+                toggleActions: 'play none none reverse'
+            },
+            opacity: 1,
+            y: 0,
+            duration: 0.8
+        });
+
+        // Nav hide on scroll down
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            if (currentScroll > lastScroll && currentScroll > 100) {
+                gsap.to('.nav', { y: -100, duration: 0.3 });
+            } else {
+                gsap.to('.nav', { y: 0, duration: 0.3 });
+            }
+            lastScroll = currentScroll;
+        });
+    </script>
+</body>
+</html>
